@@ -1,93 +1,92 @@
-# m254 LB3
+# Camunda Prozess: GitHub Issue-Erstellung mit E-Mail-Benachrichtigung
 
+## 📌 Ziel
 
+Dieses Projekt zeigt einen automatisierten Workflow mit Camunda 8, bei dem:
 
-## Getting started
+1. Ein Nutzer ein Online-Formular ausfüllt.
+2. Nach Absenden wird automatisch eine E-Mail an vordefinierte Empfänger gesendet.
+3. Zusätzlich wird über die GitHub API ein Issue im entsprechenden Repository erstellt.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+☁️ Architektur
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Gehostet in einer AWS EC2 Instanz
 
-## Add your files
+- Bereitgestellt mit Docker
+- Camunda läuft als Container mit:
+  - Web Modeler
+  - Tasklist
+  - Connectors (REST & Mail)
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## 📦 Komponenten
 
+- Camunda 8 (Docker-basiert) – BPMN Engine
+
+- REST Connector – zum Erstellen von GitHub-Issues
+
+- Mail Connector – für E-Mail-Versand via Gmail SMTP
+
+- Gmail App-Passwort – für Authentifizierung beim Mailversand
+
+- GitHub Personal Access Token – zum Erstellen von Issues
+
+## 📂 Struktur
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/rda-module/m254-lb3.git
-git branch -M main
-git push -uf origin main
+.
+├── docker-compose.yml            # Startet Camunda & benötigte Services
+├── process/
+│   └── issue_creation.bpmn       # BPMN-Prozess mit Formular, Mail- & REST-Aufruf
+├── forms/
+│   └── bug_report.form           # Camunda Form für Nutzereingabe
+└── README.md                     # Diese Datei
 ```
+## ⚙️ Konfiguration
 
-## Integrate with your tools
+### GitHub
 
-- [ ] [Set up project integrations](https://gitlab.com/rda-module/m254-lb3/-/settings/integrations)
+- Token erstellen unter: https://github.com/settings/tokens
 
-## Collaborate with your team
+- Scopes: mindestens repo
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+- REST Connector-Einstellungen:
 
-## Test and Deploy
+    - URL: https://api.github.com/repos/<owner>/<repo>/issues
 
-Use the built-in continuous integration in GitLab.
+    - Auth: Bearer
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+    - Token: <DEIN_PERSONAL_ACCESS_TOKEN>
 
-***
+Header:
+```
+{
+  "Accept": "application/vnd.github+json",
+  "Authorization": "Bearer <DEIN_PERSONAL_ACCESS_TOKEN>",
+  "Content-Type": "application/json"
+}
+```
+Gmail SMTP (Mail Connector)
 
-# Editing this README
+Gmail-Konto benötigt ein App-Passwort
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
 
-## Suggestions for a good README
+### ▶️ Ablauf
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+Nutzer ruft den Prozess über die Camunda Tasklist oder ein Frontend auf.
 
-## Name
-Choose a self-explaining name for your project.
+Formular wird angezeigt und ausgefüllt.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Nach Absenden:
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+wird eine E-Mail mit den Formulardaten an vordefinierte Empfänger geschickt.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+wird ein GitHub-Issue mit denselben Daten im angegebenen Repository erstellt.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+🛠️ Anpassen
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Empfängeradresse: Im Mail Connector konfigurieren.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+GitHub-Repo/Labels: Im REST Connector anpassen.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+Formularfelder: In der .form Datei erweitern.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Mail-Text & Betreff: Direkt im Connector definieren.
