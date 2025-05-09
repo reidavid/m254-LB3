@@ -24,22 +24,8 @@ Dieses Projekt zeigt einen automatisierten Workflow mit Camunda 8, bei dem:
 
 - REST Connector – zum Erstellen von GitHub-Issues
 
-### Mail Connector – für E-Mail-Versand via Gmail SMTP
+- Mail Connector – für E-Mail-Versand via Gmail SMTP
 
-Da Gabriel in einem Früheren Modul ein Test Gmail account erstellt hat und 2FA eingerichtet hat, kann er auf diesem Account App-Passwörter verwenden
-
-Diese APp-Passworts erlauben ihm mit einem Secret, Benutzername und Service, den Free SMTP Server von Google zu verwenden.
-
-Dafür brauchen wir in CAmunda ein Send Email BLock- und fügen dort die Credentials, also Passwort, Secret und Benutzer in das Protocol Feld ein.
-![alt text](image.png)
-
-Dannach Haben wir noch die Grundsätzlichen Sachen noch einfügen, wie Titel usw.
-![alt text](image-1.png)
-Und dann ist dieser Mail-Connection schon funktionstüchtig
-
-- Gmail App-Passwort – für Authentifizierung beim Mailversand
-
-- GitHub Personal Access Token – zum Erstellen von Issues
 
 ## 📂 Struktur
 ```
@@ -74,10 +60,22 @@ Header:
   "Content-Type": "application/json"
 }
 ```
-Gmail SMTP (Mail Connector)
+### SMTP Konfigurationen
 
-Gmail-Konto benötigt ein App-Passwort
+Da Gabriel in einem Früheren Modul ein Test Gmail account erstellt hat und 2FA eingerichtet hat, kann er auf diesem Account App-Passwörter verwenden
 
+Diese APp-Passworts erlauben ihm mit einem Secret, Benutzername und Service, den Free SMTP Server von Google zu verwenden.
+
+Dafür brauchen wir in CAmunda ein Send Email BLock- und fügen dort die Credentials, also Passwort, Secret und Benutzer in das Protocol Feld ein.
+![alt text](image.png)
+
+Dannach Haben wir noch die Grundsätzlichen Sachen noch einfügen, wie Titel usw.
+![alt text](image-1.png)
+Und dann ist dieser Mail-Connection schon funktionstüchtig
+
+- Gmail App-Passwort – für Authentifizierung beim Mailversand
+
+- GitHub Personal Access Token – zum Erstellen von Issues
 
 ### ▶️ Ablauf
 
