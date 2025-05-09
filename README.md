@@ -19,6 +19,7 @@ Dieses Projekt zeigt einen automatisierten Workflow mit Camunda 8, bei dem:
   - Connectors (REST & Mail)
 
 ## 📦 Komponenten
+- Forms 
 
 - Camunda 8 (Docker-basiert) – BPMN Engine
 
@@ -37,6 +38,8 @@ Dieses Projekt zeigt einen automatisierten Workflow mit Camunda 8, bei dem:
 └── README.md                     # Diese Datei
 ```
 ## ⚙️ Konfiguration
+
+### Camunda Form
 
 ### GitHub
 
@@ -119,9 +122,6 @@ Der Zeebe Worker läuft kontinuierlich im Hintergrund und idled, bis ein neuer A
 
 In unserem konkreten Fall sollte der Worker anschließend eine E-Mail über den SMTP-Server von Gmail verschicken. Dafür wurde ein Gmail-Konto mit App-Passwort eingerichtet, da normale Logins mit Benutzernamen und Passwort durch Googles Sicherheitsrichtlinien blockiert werden.
 
-### Herausforderungen
-Die Einrichtung der Verbindung zwischen Camunda und dem Python-Worker war nicht trivial, da die Konfiguration von Zeebe, Ports, Firewalls und Authentifizierung korrekt abgestimmt sein muss.
+Jedoch waren hat der Zeebe Worker immer irgendlweche Fehler, und wollte nicht auf dem Server idlen, und ist schlussendlich immer wieder abgestürzt.
 
-Auch das Zusammenspiel zwischen Camunda-Variablen und dem Python-Code erforderte präzises Mapping.
-
-Die größte Schwierigkeit war allerdings die stabile Ausführung des E-Mail-Versands mit externen Credentials über einen Drittanbieter wie Google – insbesondere mit Zeitouts, Authentifizierungsproblemen oder unzureichender Logging-Unterstützung bei Fehlern.
+Deswegen haben wir uns auf den normalen E-Mail block entschieden.
